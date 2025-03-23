@@ -15,35 +15,38 @@ if not api_key:
 # Initialize the AI client
 client = anthropic.Anthropic(api_key=api_key)
 
-def output_label(n):
-    return "Not Fake News" if n == 1 else "Fake News"
-
 def check_fact(news_statement):
     message = client.messages.create(
         model="claude-3-5-sonnet-20241022",
         max_tokens=1024,
         messages=[
-            {"role": "assistant", "content": "I'd like to fact-check a news statement. Please verify the following statement:"},
-            {"role": "assistant", "content": news_statement},
-            {"role": "user", "content": "Is this statement true or false?"}
+            {"role": "user", "content": f"Fact-check the following news statement and return whether it is true or false, along with an explanation: {news_statement}"}
         ]
     )
-    result = str(message.content).strip().lower()
-    return 1 if "true" in result else 0
+    
+    result = message.content.strip()
+    
+    if "true" in result.lower():
+        return "Not Fake News", result
+    else:
+        return "Fake News", result
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     result = None
+    explanation = ""
     if request.method == "POST":
         news_statement = request.form.get("news_statement")
         if news_statement:
-            fact_check_result = check_fact(news_statement)
+            result_label, explanation = check_fact(news_statement)
             result = {
-                "LR": output_label(fact_check_result),
-                "DT": output_label(fact_check_result),
-                "GBC": output_label(fact_check_result),
-                "RFC": output_label(fact_check_result),
+                "LR": result_label,
+                "DT": result_label,
+                "GBC": result_label,
+                "RFC": result_label,
+                "Explanation": explanation
             }
+    
     return render_template("index.html", result=result)
 
 if __name__ == "__main__":
