@@ -4,58 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake News Detector</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>Fake News Detector</h2>
+        <h1>Fake News Detector</h1>
         <form method="POST">
-            <input type="text" name="news_statement" placeholder="Enter a news statement" required>
-            <button type="submit">Check Fact</button>
+            <textarea name="news_statement" placeholder="Enter a news statement..." required></textarea>
+            <button type="submit">Check News</button>
         </form>
-
         {% if result %}
-            <div class="result">
-                <h3>Results:</h3>
-                <p><b>LR Prediction:</b> {{ result['LR'] }}</p>
-                <p><b>DT Prediction:</b> {{ result['DT'] }}</p>
-                <p><b>GBC Prediction:</b> {{ result['GBC'] }}</p>
-                <p><b>RFC Prediction:</b> {{ result['RFC'] }}</p>
-            </div>
+        <div class="result">
+            <h2>Prediction Results:</h2>
+            <p><strong>Logistic Regression (LR):</strong> {{ result['LR'] }}</p>
+            <p><strong>Decision Tree (DT):</strong> {{ result['DT'] }}</p>
+            <p><strong>Gradient Boosting Classifier (GBC):</strong> {{ result['GBC'] }}</p>
+            <p><strong>Random Forest Classifier (RFC):</strong> {{ result['RFC'] }}</p>
+        </div>
         {% endif %}
     </div>
 </body>
